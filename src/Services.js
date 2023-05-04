@@ -10,6 +10,7 @@ function Services() {
 
     const [spaces, setSpaces] = useState([])
     const [showSpaces, setShowSpaces] = useState(false)
+    const [isSpaceAvailable, setIsSpaceAvailable] = useState(true); // Add this line
 
     const [periodicals, setPeriodicals] = useState([])
     const [showPeriodicals, setShowPeriodicals] = useState(false)
@@ -72,10 +73,15 @@ function Services() {
         }
 
         const handleReserveSpace = () => {
-            setShowSpaces(false);
+          setShowSpaces(false);
+          if (isSpaceAvailable) {
             showRegistrationSpaceForm(true);
-            
-          };
+            setIsSpaceAvailable(false);
+          } else {
+            alert("Sorry! This space is already taken.");
+          }
+        };
+        
 
         function showRegistrationSpaceForm(show) {
             let form = document.getElementById("space-form");
