@@ -2,6 +2,8 @@ import React  from "react";
 import { useState,useEffect } from "react";
 
 
+
+
 function Services() {
     const [books , setBooks] = useState([])
     const [showBooks, setShowBooks] = useState(false);
@@ -11,6 +13,7 @@ function Services() {
 
     const [periodicals, setPeriodicals] = useState([])
     const [showPeriodicals, setShowPeriodicals] = useState(false)
+
 
 
     useEffect(() => {
@@ -33,12 +36,27 @@ function Services() {
 
         const handleShowBooks = () => {
             setShowBooks(true);
+            setShowSpaces(false);
+            setShowPeriodicals(false);
           };
 
 
-        const handleReserveBook = () => {
+        const handleReserveBook = (bookId) => {
             setShowBooks(false);
             showRegistrationForm(true);
+          
+            const updatedBooks = books.map((book) => {
+              if (book.id === bookId) {
+                return {
+                  ...book,
+                  available_books: book.available_books - 1
+                };
+              }
+              return book;
+            });
+            setBooks(updatedBooks);
+
+
           };
 
         function showRegistrationForm(show) {
@@ -49,20 +67,26 @@ function Services() {
 
         const handleShowSpaces = () => {
             setShowSpaces(true);
+            setShowBooks(false);
+            setShowPeriodicals(false);
         }
 
         const handleReserveSpace = () => {
             setShowSpaces(false);
             showRegistrationSpaceForm(true);
+            
           };
 
         function showRegistrationSpaceForm(show) {
             let form = document.getElementById("space-form");
             form?.style.setProperty("display", show ? "block" : "none");
+            
           }
 
         const handleShowPeriodicals = () => {
             setShowPeriodicals(true);
+            setShowSpaces(false);
+            setShowBooks(false)
         }
 
         const handleReservePeriodical = () => {
@@ -79,17 +103,17 @@ function Services() {
     
     return(
         <>
-            <h1>Services</h1>
+            <h1 className="Start">Services</h1>
             <div className="icons">
                 <div className="icons-container">
-                    <h3>Our Books</h3>
+                    <h3 className="container-header">Our Books</h3>
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOZexRYve7e39-JvKg3-wjMOPmbiKHW3vG1w&usqp=CAU" alt="books" className="image-icons" />
                     <br></br>
                     <p>Search for a book in our Library Collection and reserve one today</p>
                     <button onClick={handleShowBooks}>Our Books</button>
                 </div>
             <div className="icons-container">
-                <h3>Our Spaces</h3>
+                <h3 className="container-header">Our Spaces</h3>
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvzN9uZbNOmtVqKhIRY4Vlc1gd1fwhAo_ZeQ&usqp=CAU" alt="spaces" className="image-icons" />
                 <br></br>
                 <p>You can now book a physical space for you and/or your group</p>
@@ -97,7 +121,7 @@ function Services() {
                
             </div>
                 <div className="icons-container">
-                    <h3>Our Periodicals</h3>
+                    <h3 className="container-header">Our Periodicals</h3>
                     <img src="https://images.unsplash.com/photo-1523249322636-7defc1f0c35a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8cGVyaW9kaWNhbHMlMjBib29rc3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60" alt="spaces" className="image-icons" />
                     <br></br>
                     <p>Get indepth knowledge with our featured periodicals books</p>
@@ -113,14 +137,15 @@ function Services() {
               {books.map((book) => (
                 
                 <div className="book-item" key={book.id}>
-                  <p className="book-title">Title: {book.title}</p>
+                  <p className="book-title">Title: <span>{book.title}</span></p>
                   <img className="book-image" src={book.image} alt="my books" />
-                  <p>Author: {book.author}</p>
-                  <p>Genre: {book.genre}</p>
-                  <p className="abstract">Abstract: {book.abstract}</p>
-                  <p>Language: {book.language}</p>
-                  <p>No Available: {book.available_books}</p>
-                  <button onClick={handleReserveBook} className="reserve-book">Reserve a Book</button>
+                  <p>Author: <span>{book.author}</span></p>
+                  <p>Genre: <span>{book.genre}</span></p>
+                  <p className="abstract">Abstract: <span>{book.abstract}</span></p>
+                  <p>Language: <span>{book.language}</span></p>
+                  <p>No Available: <span>{book.available_books}</span></p>
+                  <button onClick={() => handleReserveBook(book.id)} className="reserve-book">Reserve a Book</button>
+
 
                 </div>
                 
@@ -155,7 +180,9 @@ function Services() {
                 <label for="notes">Additional Notes/Comments:</label>
                 <textarea id="notes" name="notes"></textarea>
 
-                <button type="submit" onClick={() => showRegistrationForm(false)}>Submit</button>
+                <button type="submit" onClick={() => {showRegistrationForm(false)
+                alert('Your Book has been reserved. Thank You!')
+                }} >Submit</button>
             </form>
 
             
@@ -198,13 +225,15 @@ function Services() {
                     <label for="num-people">Number of People:</label>
                     <input type="number" id="num-people" name="num-people" required/>
 
-                    <input type="submit" value="Book" />
-                    </form>
+                    <button type="submit" value='book' onClick={() => {showRegistrationSpaceForm(false)
+                alert('Your Space has been reserved. Thank You!')
+                }} >Submit</button>
+                    </form >
 
             
                 {showPeriodicals && (
           <>
-          <h1>Periodicals</h1>
+          <h1 className="content-header">Periodicals</h1>
           <div className="books-card">
             {periodicals.map(periodical => (
                 <div className="book-item">
@@ -245,14 +274,14 @@ function Services() {
                 <label for="notes">Additional Notes/Comments:</label>
                 <textarea id="notes" name="notes"></textarea>
 
-                <button type="submit" onClick={() => showPeriodicalsForm(false)}>Submit</button>
+                <button type="submit" onClick={() => {showRegistrationForm(false)
+                alert('Your Periodical-Book has been reserved. Thank You!')
+                }} >Submit</button>
             </form>
             
         </>    
     )
     
-
-    
-}
+            }
 
 export default Services;
